@@ -1,11 +1,11 @@
 package finnagr
 
 import (
-	"fmt"
-	"os"
+	"github.com/miolfo/goodreads-finna/internal/util"
+	"github.com/miolfo/goodreads-finna/pkg/goodreads"
 )
 
-func Finnagr() {
-	arg := os.Args[1]
-	fmt.Println(arg)
+func Finnagr(path string) {
+	records := util.ReadCsvFromPath(path)
+	goodreads.ParseBooks(records)
 }
