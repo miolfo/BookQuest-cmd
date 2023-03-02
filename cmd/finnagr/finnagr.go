@@ -1,9 +1,11 @@
 package finnagr
 
 import (
+	"fmt"
 	"github.com/miolfo/goodreads-finna/internal/util"
 	"github.com/miolfo/goodreads-finna/pkg/finna"
 	"github.com/miolfo/goodreads-finna/pkg/goodreads"
+	"log"
 )
 
 func Finnagr(path string) {
@@ -17,5 +19,10 @@ func Finnagr(path string) {
 		})
 	}
 
-	finna.FindBookByTitle(searchParams[0])
+	searchedBook := searchParams[0]
+	book, err := finna.FindBookByTitle(searchedBook)
+	if err != nil {
+		log.Print("No book found for title " + searchedBook.Title)
+	}
+	fmt.Println(book)
 }
