@@ -1,11 +1,9 @@
 package goodreads
 
-import "fmt"
-
 type Book struct {
-	title  string
-	author string
-	shelf  string
+	Title  string
+	Author string
+	Shelf  string
 }
 
 func ParseBooks(records [][]string) []Book {
@@ -15,12 +13,11 @@ func ParseBooks(records [][]string) []Book {
 			continue
 		}
 		book := Book{
-			title:  bookRecord[1],
-			author: bookRecord[2],
-			shelf:  bookRecord[18],
+			Title:  bookRecord[1],
+			Author: bookRecord[2],
+			Shelf:  bookRecord[18],
 		}
 		books = append(books, book)
 	}
-	fmt.Println(books[1])
 	return books
 }
