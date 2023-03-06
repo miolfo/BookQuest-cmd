@@ -14,7 +14,7 @@ type BookPair struct {
 	grBook    goodreads.Book
 }
 
-func Finnagr(path string) {
+func Finnagr(path string, outPath string) {
 	records := util.ReadCsvFromPath(path)
 	books := goodreads.ParseBooks(records)
 	booksToRead := goodreads.FilterByShelf(books, "to-read")
@@ -26,7 +26,16 @@ func Finnagr(path string) {
 		})
 	}
 
-	bookPairs := []BookPair{}
+	bookPairs := findBookPairs(searchParams[0:3], booksToRead)
+	fmt.Println(bookPairs)
+	csvRecords := convertToRecords(bookPairs)
+	fmt.Println(csvRecords)
+	util.WriteRecordsToPath(csvRecords, outPath)
+	log.Printf("Wrote results to file %s", outPath)
+}
+
+func findBookPairs(searchParams []finna.SearchParameters, booksToRead []goodreads.Book) []BookPair {
+	var bookPairs []BookPair
 	for i, searchParam := range searchParams {
 		log.Printf("Looking for a book with params %s", searchParam)
 		foundBook, err := finna.FindBookByTitle(searchParam)
@@ -46,5 +55,22 @@ func Finnagr(path string) {
 		//Avoid spamming Finna api too much
 		time.Sleep(500 * time.Millisecond)
 	}
-	fmt.Println(bookPairs)
+	return bookPairs
+}
+
+func convertToRecords(bookPairs []BookPair) [][]string {
+	var records [][]string
+	for _, pair := range bookPairs {
+		records = append(records, convertToRecord(pair))
+	}
+	return records
+}
+
+func convertToRecord(bookPair BookPair) []string {
+
+	if bookPair.finnaBook.Id != "" {
+		return []string{bookPair.grBook.Title, bookPair.grBook.Author, bookPair.finnaBook.Url()}
+	} else {
+		return []string{bookPair.grBook.Title, bookPair.grBook.Author, ""}
+	}
 }

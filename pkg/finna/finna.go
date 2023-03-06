@@ -21,6 +21,10 @@ type Book struct {
 	NonPresenterAuthors []Authors
 }
 
+func (book Book) Url() string {
+	return fmt.Sprintf("https://www.finna.fi/Record/%s", book.Id)
+}
+
 type Authors struct {
 	Name string
 	Role string

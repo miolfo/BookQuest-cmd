@@ -19,3 +19,7 @@ func ReadCsvFromPath(path string) [][]string {
 	}
 	return records
 }
+
+func WriteRecordsToPath(bookPairs [][]string, path string) {
+
+}

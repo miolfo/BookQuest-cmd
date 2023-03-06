@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	finnagr.Finnagr(os.Args[1])
+	finnagr.Finnagr(os.Args[1], os.Args[2])
 }
