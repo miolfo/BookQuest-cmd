@@ -21,5 +21,14 @@ func ReadCsvFromPath(path string) [][]string {
 }
 
 func WriteRecordsToPath(bookPairs [][]string, path string) {
-
+	csvFile, createErr := os.Create(path)
+	if createErr != nil {
+		log.Fatalf("Unable to create file %s", path)
+	}
+	csvWriter := csv.NewWriter(csvFile)
+	writeErr := csvWriter.WriteAll(bookPairs)
+	if writeErr != nil {
+		log.Fatalf("Unable to write record: %s", writeErr)
+	}
+	defer csvWriter.Flush()
 }
