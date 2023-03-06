@@ -13,7 +13,7 @@ type BookPair struct {
 	grBook    goodreads.Book
 }
 
-func Finnagr(path string, outPath string) {
+func Finnagr(path string, building string, outPath string) {
 	records := util.ReadCsvFromPath(path)
 	books := goodreads.ParseBooks(records)
 	booksToRead := goodreads.FilterByShelf(books, "to-read")
@@ -21,7 +21,7 @@ func Finnagr(path string, outPath string) {
 	for _, book := range booksToRead {
 		searchParams = append(searchParams, finna.SearchParameters{
 			Title:    book.Title,
-			Building: "0/Helmet/",
+			Building: building,
 		})
 	}
 

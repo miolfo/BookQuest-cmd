@@ -5,10 +5,11 @@ and then checking if they can be found from a local library using Finna public a
 Usage
 
 `
-go run . ./resources/goodreads_library_export.csv ./resources/result.csv
+go run . ./resources/goodreads_library_export.csv 0/Helmet/ ./resources/result.csv
 `
 
-First parameter is the name of the input file, and the second parameter is the output file.
+First parameter is the name of the input file. Second parameter is the building to look for (for example, 0/Helmet/ includes all Helsinki city libraries).
+Third parameter is the output file.
 Output generates a row like 
 
 `
