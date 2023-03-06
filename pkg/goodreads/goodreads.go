@@ -21,3 +21,13 @@ func ParseBooks(records [][]string) []Book {
 	}
 	return books
 }
+
+func FilterByShelf(books []Book, shelf string) []Book {
+	correctShelf := []Book{}
+	for _, book := range books {
+		if book.Shelf == shelf {
+			correctShelf = append(correctShelf, book)
+		}
+	}
+	return correctShelf
+}
