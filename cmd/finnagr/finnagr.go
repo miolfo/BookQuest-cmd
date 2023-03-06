@@ -1,7 +1,6 @@
 package finnagr
 
 import (
-	"fmt"
 	"github.com/miolfo/goodreads-finna/internal/util"
 	"github.com/miolfo/goodreads-finna/pkg/finna"
 	"github.com/miolfo/goodreads-finna/pkg/goodreads"
@@ -26,10 +25,8 @@ func Finnagr(path string, outPath string) {
 		})
 	}
 
-	bookPairs := findBookPairs(searchParams[0:3], booksToRead)
-	fmt.Println(bookPairs)
+	bookPairs := findBookPairs(searchParams, booksToRead)
 	csvRecords := convertToRecords(bookPairs)
-	fmt.Println(csvRecords)
 	util.WriteRecordsToPath(csvRecords, outPath)
 	log.Printf("Wrote results to file %s", outPath)
 }
@@ -67,7 +64,6 @@ func convertToRecords(bookPairs []BookPair) [][]string {
 }
 
 func convertToRecord(bookPair BookPair) []string {
-
 	if bookPair.finnaBook.Id != "" {
 		return []string{bookPair.grBook.Title, bookPair.grBook.Author, bookPair.finnaBook.Url()}
 	} else {
