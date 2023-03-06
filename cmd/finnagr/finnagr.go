@@ -26,17 +26,25 @@ func Finnagr(path string) {
 		})
 	}
 
-	//bookPairs := []BookPair{}
-	for _, searchParam := range searchParams {
+	bookPairs := []BookPair{}
+	for i, searchParam := range searchParams {
 		log.Printf("Looking for a book with params %s", searchParam)
 		foundBook, err := finna.FindBookByTitle(searchParam)
 		if err != nil {
 			log.Print("No book found for title " + searchParam.Title)
+			bookPairs = append(bookPairs, BookPair{
+				finnaBook: finna.Book{},
+				grBook:    booksToRead[i],
+			})
 		} else {
 			log.Print("Book found for title " + searchParam.Title)
-			fmt.Println(foundBook)
+			bookPairs = append(bookPairs, BookPair{
+				finnaBook: foundBook,
+				grBook:    booksToRead[i],
+			})
 		}
 		//Avoid spamming Finna api too much
 		time.Sleep(500 * time.Millisecond)
 	}
+	fmt.Println(bookPairs)
 }
