@@ -25,10 +25,16 @@ func Finnagr(path string, building string, outPath string) {
 		})
 	}
 
-	bookPairs := findBookPairs(searchParams, booksToRead)
+	bookPairs := findBookPairs(searchParams[0:3], booksToRead)
 	csvRecords := convertToRecords(bookPairs)
 	util.WriteRecordsToPath(csvRecords, outPath)
 	log.Printf("Wrote results to file %s", outPath)
+
+	if util.IsScraperRunning() {
+		log.Printf("Scraper is running, scraping availability info from finna...")
+	} else {
+		log.Printf("Scraper not running, not scraping availability info")
+	}
 }
 
 func findBookPairs(searchParams []finna.SearchParameters, booksToRead []goodreads.Book) []BookPair {

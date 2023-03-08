@@ -72,13 +72,9 @@ func FindBookByTitle(searchParameters SearchParameters) (Book, error) {
 }
 
 func getUrl(searchParameters SearchParameters) string {
-	return fmt.Sprintf("%s?%s%s&%s%s&%s",
-		finnaApiUrl,
-		finnaApiLookForTitle,
+	return fmt.Sprintf("https://api.finna.fi/api/v1/search?lookfor=title:%s&filter[]=building:%s&field[]=title&field[]=id&field[]=nonPresenterAuthors&filter[]=format:0/Book/",
 		url2.QueryEscape(searchParameters.Title),
-		finnaApiFilterBuilding,
-		url2.QueryEscape(searchParameters.Building),
-		finnaApiFields)
+		url2.QueryEscape(searchParameters.Building))
 }
 
 func get(url string) *http.Request {
