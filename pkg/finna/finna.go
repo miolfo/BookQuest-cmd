@@ -19,6 +19,7 @@ type Book struct {
 	Title               string
 	Id                  string
 	NonPresenterAuthors []Authors
+	Available           bool
 }
 
 func (book Book) Url() string {

@@ -25,16 +25,35 @@ func Finnagr(path string, building string, outPath string) {
 		})
 	}
 
-	bookPairs := findBookPairs(searchParams[0:3], booksToRead)
-	csvRecords := convertToRecords(bookPairs)
-	util.WriteRecordsToPath(csvRecords, outPath)
-	log.Printf("Wrote results to file %s", outPath)
+	bookPairs := findBookPairs(searchParams, booksToRead)
 
 	if util.IsScraperRunning() {
 		log.Printf("Scraper is running, scraping availability info from finna...")
+		bookPairs = addScrapingResult(bookPairs)
 	} else {
 		log.Printf("Scraper not running, not scraping availability info")
 	}
+
+	csvRecords := convertToRecords(bookPairs)
+	util.WriteRecordsToPath(csvRecords, outPath)
+	log.Printf("Wrote results to file %s", outPath)
+}
+
+func addScrapingResult(pairs []BookPair) []BookPair {
+	var scrapedPairs []BookPair
+	for _, pair := range pairs {
+		isAvailable := util.IsBookAvailable(pair.finnaBook.Id)
+		scrapedPairs = append(scrapedPairs, BookPair{
+			finnaBook: finna.Book{
+				Title:               pair.finnaBook.Title,
+				Id:                  pair.finnaBook.Id,
+				NonPresenterAuthors: pair.finnaBook.NonPresenterAuthors,
+				Available:           isAvailable,
+			},
+			grBook: pair.grBook,
+		})
+	}
+	return scrapedPairs
 }
 
 func findBookPairs(searchParams []finna.SearchParameters, booksToRead []goodreads.Book) []BookPair {
@@ -70,9 +89,13 @@ func convertToRecords(bookPairs []BookPair) [][]string {
 }
 
 func convertToRecord(bookPair BookPair) []string {
+	availabilityString := ""
+	if bookPair.finnaBook.Available {
+		availabilityString = "AVAILABLE"
+	}
 	if bookPair.finnaBook.Id != "" {
-		return []string{bookPair.grBook.Title, bookPair.grBook.Author, bookPair.finnaBook.Url()}
+		return []string{bookPair.grBook.Title, bookPair.grBook.Author, bookPair.finnaBook.Url(), availabilityString}
 	} else {
-		return []string{bookPair.grBook.Title, bookPair.grBook.Author, ""}
+		return []string{bookPair.grBook.Title, bookPair.grBook.Author, "", availabilityString}
 	}
 }
