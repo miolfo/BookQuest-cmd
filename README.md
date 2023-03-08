@@ -13,7 +13,17 @@ Third parameter is the output file.
 Output generates a row like 
 
 `
-"Children of Dune (Dune, #3)",Frank Herbert,https://www.finna.fi/Record/helmet.2404461
+"Children of Dune (Dune, #3)",Frank Herbert,https://www.finna.fi/Record/helmet.2404461,
 `
 
 when the book was found, and if not, the finna url will be omitted. 
+
+## Scraper
+
+If you are also running the Selenium based finna -scraper (https://github.com/miolfo/finna-scraper-server)
+on the same machine in port 8080, finna-goodreads tool will also check if the book is available
+for loaning. If the book is available, the example row will look like this
+
+`
+"Children of Dune (Dune, #3)",Frank Herbert,https://www.finna.fi/Record/helmet.2404461,AVAILABLE
+`
