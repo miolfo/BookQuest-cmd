@@ -5,18 +5,26 @@ and then checking if they can be found from a local library using Finna public a
 Usage
 
 `
-go run . ./resources/goodreads_library_export.csv 0/Helmet/ ./resources/result.csv
+go run . ./resources/goodreads_library_export.csv 0/Helmet/ ./resources/result.json
 `
 
 First parameter is the name of the input file. Second parameter is the building to look for (for example, 0/Helmet/ includes all Helsinki city libraries).
 Third parameter is the output file.
-Output generates a row like 
+Output generates json objects such as 
 
 `
-"Children of Dune (Dune, #3)",Frank Herbert,https://www.finna.fi/Record/helmet.2404461,
+		{
+			"Title": "Children of Dune (Dune, #3)",
+			"Author": "Herbert, Frank",
+			"Status": false,
+			"Urls": [
+				"https://www.finna.fi/Record/helmet.2404461",
+				"https://www.finna.fi/Record/helmet.2511280"
+			]
+		}
 `
 
-when the book was found, and if not, the finna url will be omitted. 
+with Urls containing all found locations for the book
 
 ## Scraper
 
