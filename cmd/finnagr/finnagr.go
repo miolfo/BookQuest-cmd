@@ -25,77 +25,36 @@ func Finnagr(path string, building string, outPath string) {
 		})
 	}
 
-	bookPairs := findBookPairs(searchParams, booksToRead)
+	bookPairs := findBooks(searchParams, booksToRead)
 
-	if util.IsScraperRunning() {
-		log.Printf("Scraper is running, scraping availability info from finna...")
-		bookPairs = addScrapingResult(bookPairs)
-	} else {
-		log.Printf("Scraper not running, not scraping availability info")
-	}
-
-	csvRecords := convertToRecords(bookPairs)
-	util.WriteRecordsToPath(csvRecords, outPath)
+	util.WriteResultsToPath(util.BookSearchResults{Results: bookPairs}, outPath)
 	log.Printf("Wrote results to file %s", outPath)
 }
 
-func addScrapingResult(pairs []BookPair) []BookPair {
-	var scrapedPairs []BookPair
-	for _, pair := range pairs {
-		isAvailable := util.IsBookAvailable(pair.finnaBook.Id)
-		scrapedPairs = append(scrapedPairs, BookPair{
-			finnaBook: finna.Book{
-				Title:               pair.finnaBook.Title,
-				Id:                  pair.finnaBook.Id,
-				NonPresenterAuthors: pair.finnaBook.NonPresenterAuthors,
-				Available:           isAvailable,
-			},
-			grBook: pair.grBook,
-		})
-	}
-	return scrapedPairs
-}
-
-func findBookPairs(searchParams []finna.SearchParameters, booksToRead []goodreads.Book) []BookPair {
-	var bookPairs []BookPair
+func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Book) []util.BookSearchResult {
+	var bookSearchResults []util.BookSearchResult
 	for i, searchParam := range searchParams {
 		log.Printf("Looking for a book with params %s", searchParam)
 		foundBook, err := finna.FindBookByTitle(searchParam)
 		if err != nil {
 			log.Print("No book found for title " + searchParam.Title)
-			bookPairs = append(bookPairs, BookPair{
-				finnaBook: finna.Book{},
-				grBook:    booksToRead[i],
+			bookSearchResults = append(bookSearchResults, util.BookSearchResult{
+				Title:  booksToRead[i].Title,
+				Author: booksToRead[i].Author,
+				Status: false,
+				Urls:   []string{},
 			})
 		} else {
 			log.Print("Book found for title " + searchParam.Title)
-			bookPairs = append(bookPairs, BookPair{
-				finnaBook: foundBook,
-				grBook:    booksToRead[i],
+			bookSearchResults = append(bookSearchResults, util.BookSearchResult{
+				Title:  booksToRead[i].Title,
+				Author: booksToRead[i].Author,
+				Status: false,
+				Urls:   []string{foundBook.Url()},
 			})
 		}
 		//Avoid spamming Finna api too much
 		time.Sleep(500 * time.Millisecond)
 	}
-	return bookPairs
-}
-
-func convertToRecords(bookPairs []BookPair) [][]string {
-	var records [][]string
-	for _, pair := range bookPairs {
-		records = append(records, convertToRecord(pair))
-	}
-	return records
-}
-
-func convertToRecord(bookPair BookPair) []string {
-	availabilityString := ""
-	if bookPair.finnaBook.Available {
-		availabilityString = "AVAILABLE"
-	}
-	if bookPair.finnaBook.Id != "" {
-		return []string{bookPair.grBook.Title, bookPair.grBook.Author, bookPair.finnaBook.Url(), availabilityString}
-	} else {
-		return []string{bookPair.grBook.Title, bookPair.grBook.Author, "", availabilityString}
-	}
+	return bookSearchResults
 }

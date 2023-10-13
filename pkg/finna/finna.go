@@ -36,11 +36,6 @@ type finnaSearchResult struct {
 	Records     []Book
 }
 
-const finnaApiUrl = "https://api.finna.fi/api/v1/search"
-const finnaApiFilterBuilding = "filter[]=building:"
-const finnaApiLookForTitle = "lookfor=title:"
-const finnaApiFields = "field[]=title&field[]=id&field[]=nonPresenterAuthors&filter[]=format:0/Book/"
-
 func FindBookByTitle(searchParameters SearchParameters) (Book, error) {
 
 	url := getUrl(searchParameters)
