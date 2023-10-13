@@ -22,6 +22,7 @@ func Finnagr(path string, building string, outPath string) {
 		searchParams = append(searchParams, finna.SearchParameters{
 			Title:    book.Title,
 			Building: building,
+			Author:   book.Author,
 		})
 	}
 
@@ -35,7 +36,7 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 	var bookSearchResults []util.BookSearchResult
 	for i, searchParam := range searchParams {
 		log.Printf("Looking for a book with params %s", searchParam)
-		foundBook, err := finna.FindBookByTitle(searchParam)
+		foundBooks, err := finna.FindBookByTitle(searchParam)
 		if err != nil {
 			log.Print("No book found for title " + searchParam.Title)
 			bookSearchResults = append(bookSearchResults, util.BookSearchResult{
@@ -46,11 +47,15 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 			})
 		} else {
 			log.Print("Book found for title " + searchParam.Title)
+			var urls []string
+			for _, foundBook := range foundBooks {
+				urls = append(urls, foundBook.Url())
+			}
 			bookSearchResults = append(bookSearchResults, util.BookSearchResult{
 				Title:  booksToRead[i].Title,
 				Author: booksToRead[i].Author,
 				Status: false,
-				Urls:   []string{foundBook.Url()},
+				Urls:   urls,
 			})
 		}
 		//Avoid spamming Finna api too much

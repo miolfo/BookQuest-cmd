@@ -8,11 +8,14 @@ import (
 	"log"
 	"net/http"
 	url2 "net/url"
+	"regexp"
+	"strings"
 )
 
 type SearchParameters struct {
 	Title    string
 	Building string
+	Author   string
 }
 
 type Book struct {
@@ -36,7 +39,7 @@ type finnaSearchResult struct {
 	Records     []Book
 }
 
-func FindBookByTitle(searchParameters SearchParameters) (Book, error) {
+func FindBookByTitle(searchParameters SearchParameters) ([]Book, error) {
 
 	url := getUrl(searchParameters)
 	fmt.Println(url)
@@ -60,17 +63,49 @@ func FindBookByTitle(searchParameters SearchParameters) (Book, error) {
 	}
 	// Since books are ordered by relevance, first result should be the matching one
 	if searchResult.ResultCount < 1 {
-		return Book{}, types.Error{
+		return []Book{}, types.Error{
 			Msg: "No matching book found",
 		}
 	}
-	return searchResult.Records[0], nil
+
+	//Remove all whitespace
+	fmt.Println(searchParameters.Title)
+	strippedSearchTitle := stripTitle(searchParameters.Title)
+	fmt.Println(strippedSearchTitle)
+	fmt.Println("---")
+	var results []Book
+	for _, record := range searchResult.Records {
+		strippedTitle := stripTitle(record.Title)
+		if strings.Contains(strippedTitle, strippedSearchTitle) || strings.Contains(strippedSearchTitle, strippedTitle) {
+			results = append(results, record)
+		}
+	}
+
+	return results, nil
+}
+
+func stripTitle(title string) string {
+	strippedTitle := strings.Replace(title, " ", "", -1)
+
+	//Remove series name in parentheses, if it exists
+	par1 := strings.Index(title, "(")
+	par2 := strings.Index(title, ")")
+
+	if par1 > 0 && par2 > 0 {
+		strippedTitle = strippedTitle[0 : par1-1]
+		fmt.Println(strippedTitle)
+	}
+
+	strippedTitle = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(strippedTitle, "")
+	strippedTitle = strings.ToLower(strippedTitle)
+	return strippedTitle
 }
 
 func getUrl(searchParameters SearchParameters) string {
-	return fmt.Sprintf("https://api.finna.fi/api/v1/search?lookfor=title:%s&filter[]=building:%s&field[]=title&field[]=id&field[]=nonPresenterAuthors&filter[]=format:0/Book/",
+	return fmt.Sprintf("https://api.finna.fi/api/v1/search?lookfor=title:%s&filter[]=building:%s&filter[]=author:%s&field[]=title&field[]=id&field[]=nonPresenterAuthors&filter[]=format:0/Book/",
 		url2.QueryEscape(searchParameters.Title),
-		url2.QueryEscape(searchParameters.Building))
+		url2.QueryEscape(searchParameters.Building),
+		url2.QueryEscape(searchParameters.Author))
 }
 
 func get(url string) *http.Request {

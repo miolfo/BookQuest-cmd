@@ -14,7 +14,7 @@ func ParseBooks(records [][]string) []Book {
 		}
 		book := Book{
 			Title:  bookRecord[1],
-			Author: bookRecord[2],
+			Author: bookRecord[3],
 			Shelf:  bookRecord[18],
 		}
 		books = append(books, book)
