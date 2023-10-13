@@ -41,6 +41,7 @@ type finnaSearchResult struct {
 
 func FindBookByTitle(searchParameters SearchParameters) ([]Book, error) {
 
+	//TODO: If first search return no results, try again with author -> author2, or without author
 	url := getUrl(searchParameters)
 	fmt.Println(url)
 	request := get(url)
@@ -69,10 +70,7 @@ func FindBookByTitle(searchParameters SearchParameters) ([]Book, error) {
 	}
 
 	//Remove all whitespace
-	fmt.Println(searchParameters.Title)
 	strippedSearchTitle := stripTitle(searchParameters.Title)
-	fmt.Println(strippedSearchTitle)
-	fmt.Println("---")
 	var results []Book
 	for _, record := range searchResult.Records {
 		strippedTitle := stripTitle(record.Title)
@@ -93,7 +91,6 @@ func stripTitle(title string) string {
 
 	if par1 > 0 && par2 > 0 {
 		strippedTitle = strippedTitle[0 : par1-1]
-		fmt.Println(strippedTitle)
 	}
 
 	strippedTitle = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(strippedTitle, "")
