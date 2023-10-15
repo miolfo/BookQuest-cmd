@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/miolfo/goodreads-finna/cmd/finnagr"
+	"github.com/miolfo/BookQuest-cmd/cmd/bookquest"
 	"os"
 )
 
 func main() {
-	finnagr.Finnagr(os.Args[1], os.Args[2], os.Args[3])
+	bookquest.Run(os.Args[1], os.Args[2], os.Args[3])
 }

@@ -1,0 +1,39 @@
+{
+	"Results": [
+		{
+			"Title": "Skyward (Skyward, #1)",
+			"Author": "Sanderson, Brandon",
+			"FinnaIds": [
+				"helmet.2505062",
+				"helmet.2371737"
+			],
+			"Available": [
+				true,
+				true
+			],
+			"Urls": [
+				"https://www.finna.fi/Record/helmet.2505062",
+				"https://www.finna.fi/Record/helmet.2371737"
+			]
+		},
+		{
+			"Title": "Seveneves",
+			"Author": "Stephenson, Neal",
+			"FinnaIds": [
+				"helmet.2210205",
+				"helmet.2252762",
+				"helmet.2539843"
+			],
+			"Available": [
+				false,
+				false,
+				false
+			],
+			"Urls": [
+				"https://www.finna.fi/Record/helmet.2210205",
+				"https://www.finna.fi/Record/helmet.2252762",
+				"https://www.finna.fi/Record/helmet.2539843"
+			]
+		}
+	]
+}

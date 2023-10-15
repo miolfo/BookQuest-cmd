@@ -1,9 +1,9 @@
-package finnagr
+package bookquest
 
 import (
-	"github.com/miolfo/goodreads-finna/internal/util"
-	"github.com/miolfo/goodreads-finna/pkg/finna"
-	"github.com/miolfo/goodreads-finna/pkg/goodreads"
+	"github.com/miolfo/BookQuest-cmd/internal/util"
+	"github.com/miolfo/BookQuest-cmd/pkg/finna"
+	"github.com/miolfo/BookQuest-cmd/pkg/goodreads"
 	"log"
 	"time"
 )
@@ -13,7 +13,7 @@ type BookPair struct {
 	grBook    goodreads.Book
 }
 
-func Finnagr(path string, building string, outPath string) {
+func Run(path string, building string, outPath string) {
 	records := util.ReadCsvFromPath(path)
 	books := goodreads.ParseBooks(records)
 	booksToRead := goodreads.FilterByShelf(books, "to-read")
