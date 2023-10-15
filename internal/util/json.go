@@ -6,14 +6,12 @@ import (
 	"os"
 )
 
-// TODO: Maybe append goodreads id (if there is such) and finna id for easier matching in results?
 type BookSearchResult struct {
-	Title    string
-	Author   string
-	FinnaIds []string
-	//TODO: Change to string after refactoring util to return actual status instead of a boolean
-	Statuses []bool
-	Urls     []string
+	Title     string
+	Author    string
+	FinnaIds  []string
+	Available []bool
+	Urls      []string
 }
 
 type BookSearchResults struct {

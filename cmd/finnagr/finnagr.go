@@ -46,10 +46,10 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 		if err != nil {
 			log.Print("No book found for title " + searchParam.Title)
 			bookSearchResults = append(bookSearchResults, util.BookSearchResult{
-				Title:    booksToRead[i].Title,
-				Author:   booksToRead[i].Author,
-				Statuses: []bool{},
-				Urls:     []string{},
+				Title:     booksToRead[i].Title,
+				Author:    booksToRead[i].Author,
+				Available: []bool{},
+				Urls:      []string{},
 			})
 		} else {
 			log.Print("Book found for title " + searchParam.Title)
@@ -60,11 +60,11 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 				finnaIds = append(finnaIds, foundBook.Id)
 			}
 			bookSearchResults = append(bookSearchResults, util.BookSearchResult{
-				Title:    booksToRead[i].Title,
-				Author:   booksToRead[i].Author,
-				Statuses: []bool{},
-				FinnaIds: finnaIds,
-				Urls:     urls,
+				Title:     booksToRead[i].Title,
+				Author:    booksToRead[i].Author,
+				Available: []bool{},
+				FinnaIds:  finnaIds,
+				Urls:      urls,
 			})
 		}
 		//Avoid spamming Finna api too much
@@ -82,11 +82,11 @@ func addScrapingResult(results util.BookSearchResults) util.BookSearchResults {
 			statuses = append(statuses, status)
 		}
 		res.Results = append(res.Results, util.BookSearchResult{
-			Title:    result.Title,
-			Author:   result.Author,
-			FinnaIds: result.FinnaIds,
-			Statuses: statuses,
-			Urls:     result.Urls,
+			Title:     result.Title,
+			Author:    result.Author,
+			FinnaIds:  result.FinnaIds,
+			Available: statuses,
+			Urls:      result.Urls,
 		})
 	}
 	return res
