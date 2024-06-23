@@ -1,6 +1,7 @@
 package bookquest
 
 import (
+	"fmt"
 	"github.com/miolfo/BookQuest-cmd/internal/util"
 	"github.com/miolfo/BookQuest-cmd/pkg/finna"
 	"github.com/miolfo/BookQuest-cmd/pkg/goodreads"
@@ -29,8 +30,9 @@ func Run(path string, building string, outPath string) {
 	bookPairs := findBooks(searchParams, booksToRead)
 	result := util.BookSearchResults{Results: bookPairs}
 	if util.IsScraperRunning() {
-		log.Printf("Scraper is running, scraping availability info from finna...")
+		log.Printf("Backend is running, fetching info from backend apis...")
 		result = addScrapingResult(result)
+		result = addEbooksComResult(result)
 	} else {
 		log.Printf("Scraper not running, not scraping availability info")
 	}
@@ -90,4 +92,12 @@ func addScrapingResult(results util.BookSearchResults) util.BookSearchResults {
 		})
 	}
 	return res
+}
+
+func addEbooksComResult(results util.BookSearchResults) util.BookSearchResults {
+	for _, result := range results.Results {
+		ebooksResponse := util.GetBookInfo(result.Title, result.Author)
+		fmt.Println(ebooksResponse)
+	}
+	return results
 }
