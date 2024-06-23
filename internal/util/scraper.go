@@ -18,7 +18,7 @@ type availabilityResponse struct {
 }
 
 func IsScraperRunning() bool {
-	url := "http://localhost:8080/api/ping"
+	url := "http://localhost:3000/api/ping"
 	request := get(url)
 	client := &http.Client{}
 	response, err := client.Do(request)
@@ -46,7 +46,7 @@ func IsBookAvailable(finnaId string) bool {
 		return false
 	}
 	log.Printf("Checking availability for book %s", finnaId)
-	url := fmt.Sprintf("http://localhost:8080/api/availability?id=%s", finnaId)
+	url := fmt.Sprintf("http://localhost:3000/api/availability?id=%s", finnaId)
 
 	request := get(url)
 	client := &http.Client{}

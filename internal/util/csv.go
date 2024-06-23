@@ -9,7 +9,8 @@ import (
 func ReadCsvFromPath(path string) [][]string {
 	f, err := os.Open(path)
 	if err != nil {
-		log.Fatal("Error opening file")
+		log.Print("Error opening file")
+		log.Fatal(err)
 	}
 	defer f.Close()
 	csvReader := csv.NewReader(f)

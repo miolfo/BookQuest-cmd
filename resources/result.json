@@ -20,19 +20,16 @@
 			"Title": "Seveneves",
 			"Author": "Stephenson, Neal",
 			"FinnaIds": [
-				"helmet.2210205",
-				"helmet.2252762",
-				"helmet.2539843"
+				"helmet.2539843",
+				"helmet.2252762"
 			],
 			"Available": [
-				false,
 				false,
 				false
 			],
 			"Urls": [
-				"https://www.finna.fi/Record/helmet.2210205",
-				"https://www.finna.fi/Record/helmet.2252762",
-				"https://www.finna.fi/Record/helmet.2539843"
+				"https://www.finna.fi/Record/helmet.2539843",
+				"https://www.finna.fi/Record/helmet.2252762"
 			]
 		}
 	]
