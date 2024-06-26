@@ -31,11 +31,12 @@ func Run(path string, building string, outPath string) {
 	result := util.BookSearchResults{Results: bookPairs}
 	if util.IsScraperRunning() {
 		log.Printf("Backend is running, fetching info from backend apis...")
-		result = addScrapingResult(result)
-		result = addEbooksComResult(result)
+		result = addScrapingResult(&result)
 	} else {
 		log.Printf("Scraper not running, not scraping availability info")
 	}
+	result = addEbooksComResult(&result)
+	fmt.Println(result)
 	util.WriteResultsToPath(result, outPath)
 	log.Printf("Wrote results to file %s", outPath)
 }
@@ -75,29 +76,29 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 	return bookSearchResults
 }
 
-func addScrapingResult(results util.BookSearchResults) util.BookSearchResults {
-	res := util.BookSearchResults{Results: []util.BookSearchResult{}}
-	for _, result := range results.Results {
+func addScrapingResult(results *util.BookSearchResults) util.BookSearchResults {
+	for i, result := range results.Results {
 		var statuses []bool
 		for _, finnaId := range result.FinnaIds {
 			status := util.IsBookAvailable(finnaId)
 			statuses = append(statuses, status)
 		}
-		res.Results = append(res.Results, util.BookSearchResult{
-			Title:     result.Title,
-			Author:    result.Author,
-			FinnaIds:  result.FinnaIds,
-			Available: statuses,
-			Urls:      result.Urls,
-		})
+		results.Results[i].Available = statuses
 	}
-	return res
+	return *results
 }
 
-func addEbooksComResult(results util.BookSearchResults) util.BookSearchResults {
-	for _, result := range results.Results {
-		ebooksResponse := util.GetBookInfo(result.Title, result.Author)
-		fmt.Println(ebooksResponse)
+func addEbooksComResult(results *util.BookSearchResults) util.BookSearchResults {
+	for i, result := range results.Results {
+		ebooksResponse := util.GetEbooksComInfo(result.Title, result.Author)
+		if ebooksResponse.TotalResults > 0 {
+			ebooksBook := ebooksResponse.Results[0]
+			results.Results[i].Urls = append(result.Urls, ebooksBook.StorefrontUrl)
+			results.Results[i].Price = util.PriceWithCurrency{
+				Value:    ebooksBook.Price.Value,
+				Currency: ebooksBook.Price.Currency,
+			}
+		}
 	}
-	return results
+	return *results
 }

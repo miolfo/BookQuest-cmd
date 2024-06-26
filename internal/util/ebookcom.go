@@ -1,23 +1,39 @@
 package util
 
 import (
-	"bytes"
 	json2 "encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	url2 "net/url"
 )
 
 type EbooksComResponse struct {
-	Title  string
-	Author string
+	TotalResults int
+	Results      []EbooksComResult
 }
 
-func GetBookInfo(title string, author string) EbooksComResponse {
-	url := "http://localhost:3000/api/search-ebookcom"
-	log.Printf("Searching ebooks.com for %s, %s", title, author)
-	request := post(url, title, author)
+type EbooksComResult struct {
+	Title         string
+	StorefrontUrl string
+	Authors       []EbooksComAuthor
+	Price         EbooksComPrice
+}
+
+type EbooksComAuthor struct {
+	Name string
+}
+
+type EbooksComPrice struct {
+	Currency string
+	Value    float32
+}
+
+func GetEbooksComInfo(title string, author string) EbooksComResponse {
+	url := fmt.Sprintf("https://api.ebooks.com/v2/FI/book/search?title=%s&author=%s", url2.QueryEscape(title), url2.QueryEscape(author))
+	log.Printf("Searching ebooks.com for %s, %s from path %s", title, author, url)
+	request := getEbook(url, title, author)
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
@@ -36,15 +52,11 @@ func GetBookInfo(title string, author string) EbooksComResponse {
 		log.Printf("Error checking ebooks.com: %s", err)
 		return EbooksComResponse{}
 	}
-	log.Printf("Ebooks com response for %s, %s: %s", title, author, result)
 	return result
 }
 
-func post(url string, title string, author string) *http.Request {
-	body := fmt.Sprintf("{\"author\": \"%s\", \"title\": \"%s\"}", author, title)
-	jsonStr := []byte(body)
-	log.Printf(body)
-	request, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+func getEbook(url string, title string, author string) *http.Request {
+	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Content-Type", "application/json")
 	return request

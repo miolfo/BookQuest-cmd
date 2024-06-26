@@ -13,8 +13,13 @@
 			],
 			"Urls": [
 				"https://www.finna.fi/Record/helmet.2505062",
-				"https://www.finna.fi/Record/helmet.2371737"
-			]
+				"https://www.finna.fi/Record/helmet.2371737",
+				"https://www.ebooks.com/en-fi/book/210373761/sunreach-skyward-flight-novella-1/brandon-sanderson/"
+			],
+			"Price": {
+				"Currency": "EUR",
+				"Value": 5.44
+			}
 		},
 		{
 			"Title": "Seveneves",
@@ -25,12 +30,17 @@
 			],
 			"Available": [
 				false,
-				false
+				true
 			],
 			"Urls": [
 				"https://www.finna.fi/Record/helmet.2539843",
-				"https://www.finna.fi/Record/helmet.2252762"
-			]
+				"https://www.finna.fi/Record/helmet.2252762",
+				"https://www.ebooks.com/en-fi/book/1745874/seveneves/neal-stephenson/"
+			],
+			"Price": {
+				"Currency": "EUR",
+				"Value": 12.29
+			}
 		}
 	]
 }

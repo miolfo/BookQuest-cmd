@@ -12,6 +12,12 @@ type BookSearchResult struct {
 	FinnaIds  []string
 	Available []bool
 	Urls      []string
+	Price     PriceWithCurrency
+}
+
+type PriceWithCurrency struct {
+	Currency string
+	Value    float32
 }
 
 type BookSearchResults struct {
