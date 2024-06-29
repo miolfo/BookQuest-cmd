@@ -9,15 +9,6 @@ import (
 	"strings"
 )
 
-type ping struct {
-	Message string
-}
-
-type availabilityResponse struct {
-	//Possible types are 'ORDERED' | 'UNAVAILABLE' | 'AVAILABLE' | 'WAITING' | 'IN_TRANSIT' | 'UNKNOWN'
-	Statuses []string
-}
-
 type AvailabilityResult struct {
 	FinnaId   string
 	Available bool
@@ -50,10 +41,12 @@ func AreBooksAvailable(finnaId []string) []AvailabilityResult {
 func IsBookAvailable(finnaId string, ctx context.Context) bool {
 
 	var nodes []*cdp.Node
+	url := fmt.Sprintf("https://www.finna.fi/Record/%s", finnaId)
+	log.Println("Checking availability from " + url)
 	err := chromedp.Run(ctx,
-		chromedp.Navigate(fmt.Sprintf("https://www.finna.fi/Record/%s", finnaId)),
+		chromedp.Navigate(url),
 		chromedp.WaitVisible(`.holdings-title`),
-		chromedp.Nodes(`.holdings-details > span`, &nodes),
+		chromedp.Nodes(`.holdings-details > span`, &nodes, chromedp.AtLeast(0)),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -70,7 +63,6 @@ func IsBookAvailable(finnaId string, ctx context.Context) bool {
 		}
 		if strings.Contains(res, "saatavissa") {
 			isAvailable = true
-			log.Println("Found available book!")
 		}
 	}
 
