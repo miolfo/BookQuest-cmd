@@ -16,6 +16,7 @@ vendor/
 finna-goodreads.iml
 .idea
 resources/result.csv
+resources/result.json
 
 .DS_Store
 resources/.DS_STORE
