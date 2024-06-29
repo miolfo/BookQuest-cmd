@@ -43,7 +43,7 @@ func FindBookByTitle(searchParameters SearchParameters) ([]Book, error) {
 
 	//TODO: If first search return no results, try again with author -> author2, or without author
 	url := getUrl(searchParameters)
-	fmt.Println(url)
+	log.Println(url)
 	request := get(url)
 	client := &http.Client{}
 	response, err := client.Do(request)

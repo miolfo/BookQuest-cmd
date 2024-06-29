@@ -8,8 +8,8 @@
 				"helmet.2371737"
 			],
 			"Available": [
-				false,
-				false
+				true,
+				true
 			],
 			"Urls": [
 				"https://www.finna.fi/Record/helmet.2505062",
@@ -30,7 +30,7 @@
 			],
 			"Available": [
 				false,
-				false
+				true
 			],
 			"Urls": [
 				"https://www.finna.fi/Record/helmet.2539843",

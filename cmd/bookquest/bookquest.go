@@ -1,7 +1,6 @@
 package bookquest
 
 import (
-	"fmt"
 	"github.com/miolfo/BookQuest-cmd/internal/util"
 	"github.com/miolfo/BookQuest-cmd/pkg/finna"
 	"github.com/miolfo/BookQuest-cmd/pkg/goodreads"
@@ -32,7 +31,6 @@ func Run(path string, building string, outPath string) {
 	result := util.BookSearchResults{Results: bookPairs}
 	result = addScrapingResult(&result)
 	result = addEbooksComResult(&result)
-	fmt.Println(result)
 	util.WriteResultsToPath(result, outPath)
 	log.Printf("Wrote results to file %s", outPath)
 }
