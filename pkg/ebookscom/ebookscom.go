@@ -1,4 +1,4 @@
-package util
+package ebookscom
 
 import (
 	json2 "encoding/json"

@@ -2,6 +2,7 @@ package bookquest
 
 import (
 	"github.com/miolfo/BookQuest-cmd/internal/util"
+	"github.com/miolfo/BookQuest-cmd/pkg/ebookscom"
 	"github.com/miolfo/BookQuest-cmd/pkg/finna"
 	"github.com/miolfo/BookQuest-cmd/pkg/goodreads"
 	"log"
@@ -93,7 +94,7 @@ func addScrapingResult(results *util.BookSearchResults) util.BookSearchResults {
 
 func addEbooksComResult(results *util.BookSearchResults) util.BookSearchResults {
 	for i, result := range results.Results {
-		ebooksResponse := util.GetEbooksComInfo(result.Title, result.Author)
+		ebooksResponse := ebookscom.GetEbooksComInfo(result.Title, result.Author)
 		if ebooksResponse.TotalResults > 0 {
 			ebooksBook := ebooksResponse.Results[0]
 			results.Results[i].Urls = append(result.Urls, ebooksBook.StorefrontUrl)
