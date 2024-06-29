@@ -1,11 +1,11 @@
 package util
 
 import (
-	json2 "encoding/json"
-	"fmt"
-	"io"
+	"context"
+	"github.com/chromedp/cdproto/cdp"
+	"github.com/chromedp/chromedp"
 	"log"
-	"net/http"
+	"strings"
 )
 
 type ping struct {
@@ -17,70 +17,58 @@ type availabilityResponse struct {
 	Statuses []string
 }
 
-func IsScraperRunning() bool {
-	url := "http://localhost:3000/api/ping"
-	request := get(url)
-	client := &http.Client{}
-	response, err := client.Do(request)
-	if err != nil {
-		log.Printf("Scraper not responding in url %s", url)
-		return false
-	}
-	defer response.Body.Close()
-	json, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Printf("Scraper not responding with proper data in url %s", url)
-		return false
-	}
-	var pingresult ping
-	err2 := json2.Unmarshal(json, &pingresult)
-	if err2 != nil {
-		log.Printf("Scraper not responding with proper data in url %s", url)
-		return false
-	}
-	return pingresult.Message == "pong"
+type AvailabilityResult struct {
+	FinnaId   string
+	Available bool
 }
 
-func IsBookAvailable(finnaId string) bool {
-	if finnaId == "" {
-		return false
+func AreBooksAvailable(finnaId []string) []AvailabilityResult {
+	var res []AvailabilityResult
+	//User agent spoofing required for headless chrome to correctly make requests from javascript
+	opts := []chromedp.ExecAllocatorOption{
+		chromedp.UserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3830.0 Safari/537.36"),
+		chromedp.WindowSize(1920, 1080),
+		chromedp.Headless,
 	}
-	log.Printf("Checking availability for book %s", finnaId)
-	url := fmt.Sprintf("http://localhost:3000/api/availability?id=%s", finnaId)
+	actx, acancel := chromedp.NewExecAllocator(context.Background(), opts...)
+	defer acancel()
+	ctx, cancel := chromedp.NewContext(actx)
+	defer cancel()
+	return res
+}
 
-	request := get(url)
-	client := &http.Client{}
-	response, err := client.Do(request)
+func IsBookAvailable(finnaId string, ctx context.Context) bool {
+
+	// run task list
+	var title string
+	var html string
+	var nodes []*cdp.Node
+	var text string
+	err := chromedp.Run(ctx,
+		chromedp.Navigate(`https://www.finna.fi/Record/helmet.2527262`),
+		chromedp.Title(&title),
+		chromedp.WaitVisible(`.holdings-title`),
+		//chromedp.InnerHTML(`.holdings-title`, &html, chromedp.NodeVisible),
+		chromedp.Nodes(`.holdings-details > span`, &nodes),
+		//chromedp.Nodes(`.holdings-details`, childNodes)
+	)
 	if err != nil {
-		log.Printf("Error checking availability: %s", err)
-		return false
-	}
-	defer response.Body.Close()
-	json, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Printf("Error checking availability: %s", err)
-		return false
-	}
-	var result availabilityResponse
-	err2 := json2.Unmarshal(json, &result)
-	if err2 != nil {
-		log.Printf("Error checking availability: %s", err)
-		return false
+		log.Fatal(err)
 	}
 
-	log.Printf("Availability results for %s: %s", finnaId, result)
+	log.Println(strings.TrimSpace(title))
+	log.Println(strings.TrimSpace(html))
+	log.Println(strings.TrimSpace(text))
 
-	for _, status := range result.Statuses {
-		if status == "AVAILABLE" {
-			return true
+	for _, n := range nodes {
+		log.Println(n.FullXPath())
+		var res string
+		err2 := chromedp.Run(ctx,
+			chromedp.TextContent(n.FullXPath(), &res))
+		if err2 != nil {
+			log.Println(err2)
+			continue
 		}
+		log.Println(res)
 	}
-
-	return false
-}
-
-func get(url string) *http.Request {
-	request, _ := http.NewRequest("GET", url, nil)
-	request.Header.Set("Accept", "text/json")
-	return request
 }

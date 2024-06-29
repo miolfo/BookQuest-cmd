@@ -29,12 +29,7 @@ func Run(path string, building string, outPath string) {
 
 	bookPairs := findBooks(searchParams, booksToRead)
 	result := util.BookSearchResults{Results: bookPairs}
-	if util.IsScraperRunning() {
-		log.Printf("Backend is running, fetching info from backend apis...")
-		result = addScrapingResult(&result)
-	} else {
-		log.Printf("Scraper not running, not scraping availability info")
-	}
+	result = addScrapingResult(&result)
 	result = addEbooksComResult(&result)
 	fmt.Println(result)
 	util.WriteResultsToPath(result, outPath)
@@ -77,14 +72,25 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 }
 
 func addScrapingResult(results *util.BookSearchResults) util.BookSearchResults {
-	for i, result := range results.Results {
-		var statuses []bool
+	var finnaIdList []string
+	for _, result := range results.Results {
 		for _, finnaId := range result.FinnaIds {
-			status := util.IsBookAvailable(finnaId)
-			statuses = append(statuses, status)
+			finnaIdList = append(finnaIdList, finnaId)
+			//status := util.IsBookAvailable(finnaId)
+			//statuses = append(statuses, status)
 		}
-		results.Results[i].Available = statuses
+		//results.Results[i].Available = statuses
 	}
+
+	/*availabilities := util.AreBooksAvailable(finnaIdList)
+	for _, availabilityResult := range availabilities {
+		if availabilityResult.Available {
+			for _, bookSearchResult := range results.Results {
+				//finnaIdIndex := slices
+			}
+		}
+	}*/
+
 	return *results
 }
 
