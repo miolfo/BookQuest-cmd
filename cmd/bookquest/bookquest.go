@@ -6,6 +6,7 @@ import (
 	"github.com/miolfo/BookQuest-cmd/pkg/finna"
 	"github.com/miolfo/BookQuest-cmd/pkg/goodreads"
 	"log"
+	"slices"
 	"time"
 )
 
@@ -76,20 +77,18 @@ func addScrapingResult(results *util.BookSearchResults) util.BookSearchResults {
 	for _, result := range results.Results {
 		for _, finnaId := range result.FinnaIds {
 			finnaIdList = append(finnaIdList, finnaId)
-			//status := util.IsBookAvailable(finnaId)
-			//statuses = append(statuses, status)
 		}
-		//results.Results[i].Available = statuses
 	}
 
-	/*availabilities := util.AreBooksAvailable(finnaIdList)
+	availabilities := util.AreBooksAvailable(finnaIdList)
 	for _, availabilityResult := range availabilities {
-		if availabilityResult.Available {
-			for _, bookSearchResult := range results.Results {
-				//finnaIdIndex := slices
+		for bsIdx, bookSearchResult := range results.Results {
+			finnaIdIndex := slices.Index(bookSearchResult.FinnaIds, availabilityResult.FinnaId)
+			if finnaIdIndex > -1 {
+				results.Results[bsIdx].Available = append(results.Results[bsIdx].Available, availabilityResult.Available)
 			}
 		}
-	}*/
+	}
 
 	return *results
 }

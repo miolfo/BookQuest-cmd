@@ -25,7 +25,7 @@ type AvailabilityResult struct {
 func AreBooksAvailable(finnaId []string) []AvailabilityResult {
 	var res []AvailabilityResult
 	//User agent spoofing required for headless chrome to correctly make requests from javascript
-	opts := []chromedp.ExecAllocatorOption{
+	/*opts := []chromedp.ExecAllocatorOption{
 		chromedp.UserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3830.0 Safari/537.36"),
 		chromedp.WindowSize(1920, 1080),
 		chromedp.Headless,
@@ -33,7 +33,13 @@ func AreBooksAvailable(finnaId []string) []AvailabilityResult {
 	actx, acancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer acancel()
 	ctx, cancel := chromedp.NewContext(actx)
-	defer cancel()
+	defer cancel()*/
+	for _, id := range finnaId {
+		res = append(res, AvailabilityResult{
+			FinnaId:   id,
+			Available: false,
+		})
+	}
 	return res
 }
 
@@ -71,4 +77,6 @@ func IsBookAvailable(finnaId string, ctx context.Context) bool {
 		}
 		log.Println(res)
 	}
+
+	return false
 }
