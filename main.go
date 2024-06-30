@@ -11,11 +11,12 @@ func main() {
 	inputFile := flag.String("in", "", "Input file path and name")
 	library := flag.String("library", "0/Helmet/", "Finna library code (i.e. 0/Helmet/)")
 	outputFile := flag.String("out", "", "Output json file name")
-	statusLogFile := flag.String("statusOut", "", "Output status json file for following progress")
-	flag.Parse()
+	noStatusLog := flag.Bool("nostatuslog", false, "Suppress status log")
 
-	if len(*statusLogFile) > 0 {
-		gr_util.InitLogger(*statusLogFile)
+	flag.Parse()
+	log.Printf("Logger: %t", *noStatusLog)
+	if *noStatusLog {
+		gr_util.DisableLogger()
 	}
 
 	if len(*inputFile) == 0 {

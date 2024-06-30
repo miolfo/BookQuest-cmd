@@ -4,60 +4,37 @@ import (
 	"log"
 )
 
-type StatusLogger struct {
-	file string
-}
-
 type status struct {
 	Status string
 	Done   int
-	Total  int
 }
 
-var instance *StatusLogger
-var currentStatus *status
-
-func GetLogger() StatusLogger {
-
-	return *instance
+var currentStatus *status = &status{
+	Status: "Starting",
+	Done:   0,
 }
 
-func InitLogger(file string) {
-
-	instance = &StatusLogger{file: file}
-	currentStatus = &status{
-		Status: "Starting",
-		Done:   0,
-		Total:  0,
-	}
-}
+var enabled bool = true
 
 func UpdateLoggerStatus(status string) {
 
-	if instance == nil {
-		log.Printf("Logger not initialized, skipping update")
-		return
-	}
 	currentStatus.Status = status
+	currentStatus.Done = 0
+	flushLogger()
 }
 
-func UpdateLoggerTotalCount(count int) {
-	if instance == nil {
-		log.Printf("Logger not initialized, skipping update")
-		return
-	}
-	currentStatus.Total = count
+func DisableLogger() {
+	enabled = false
 }
 
 func UpdateLoggerDoneCount(count int) {
-	if instance == nil {
-		log.Printf("Logger not initialized, skipping update")
-		return
-	}
+
 	currentStatus.Done = count
+	flushLogger()
 }
 
-func FlushLogger() {
-
-	log.Printf("STATUS LOG: FLUSH")
+func flushLogger() {
+	if enabled {
+		log.Printf("STATUS_LOG,STATUS:%s,DONECOUNT:%d", currentStatus.Status, currentStatus.Done)
+	}
 }

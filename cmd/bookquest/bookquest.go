@@ -29,27 +29,18 @@ func Run(path string, building string, outPath string) {
 	}
 
 	gr_util.UpdateLoggerStatus("Finding books from Finna api")
-	gr_util.UpdateLoggerTotalCount(len(booksToRead))
-	gr_util.FlushLogger()
 
 	bookPairs := findBooks(searchParams, booksToRead)
 	result := gr_util.BookSearchResults{Results: bookPairs}
 
 	gr_util.UpdateLoggerStatus("Scraping availability results")
-	gr_util.UpdateLoggerDoneCount(0)
-	gr_util.FlushLogger()
 
 	result = addScrapingResult(&result)
 
 	gr_util.UpdateLoggerStatus("Searching books from ebooks.com api")
-	gr_util.UpdateLoggerDoneCount(0)
-	gr_util.FlushLogger()
 
 	result = addEbooksComResult(&result)
 	gr_util.WriteResultsToPath(result, outPath)
-
-	gr_util.UpdateLoggerStatus("Done")
-	gr_util.FlushLogger()
 
 	log.Printf("Wrote results to file %s", outPath)
 }
@@ -83,6 +74,7 @@ func findBooks(searchParams []finna.SearchParameters, booksToRead []goodreads.Bo
 				Urls:      urls,
 			})
 		}
+		gr_util.UpdateLoggerDoneCount(i + 1)
 		//Avoid spamming Finna api too much
 		time.Sleep(500 * time.Millisecond)
 	}
@@ -98,7 +90,7 @@ func addScrapingResult(results *gr_util.BookSearchResults) gr_util.BookSearchRes
 	}
 
 	availabilities := finna.AreBooksAvailable(finnaIdList, func(doneCount int) {
-
+		gr_util.UpdateLoggerDoneCount(doneCount)
 	})
 	for _, availabilityResult := range availabilities {
 		for bsIdx, bookSearchResult := range results.Results {
