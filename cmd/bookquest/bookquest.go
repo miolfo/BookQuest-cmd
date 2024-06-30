@@ -107,6 +107,7 @@ func addScrapingResult(results *gr_util.BookSearchResults) gr_util.BookSearchRes
 func addEbooksComResult(results *gr_util.BookSearchResults) gr_util.BookSearchResults {
 	for i, result := range results.Results {
 		ebooksResponse := ebookscom.GetEbooksComInfo(result.Title, result.Author)
+		gr_util.UpdateLoggerDoneCount(i + 1)
 		if ebooksResponse.TotalResults > 0 {
 			ebooksBook := ebooksResponse.Results[0]
 			results.Results[i].Urls = append(result.Urls, ebooksBook.StorefrontUrl)

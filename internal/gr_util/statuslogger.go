@@ -35,6 +35,6 @@ func UpdateLoggerDoneCount(count int) {
 
 func flushLogger() {
 	if enabled {
-		log.Printf("STATUS_LOG,STATUS:%s,DONECOUNT:%d", currentStatus.Status, currentStatus.Done)
+		log.Printf("STATUS_LOG,STATUS:%s,DONECOUNT:%d,", currentStatus.Status, currentStatus.Done)
 	}
 }
