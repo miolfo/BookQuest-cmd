@@ -3,6 +3,7 @@ package ebookscom
 import (
 	json2 "encoding/json"
 	"fmt"
+	"github.com/miolfo/BookQuest-cmd/pkg/util"
 	"io"
 	"log"
 	"net/http"
@@ -31,9 +32,10 @@ type EbooksComPrice struct {
 }
 
 func GetEbooksComInfo(title string, author string) EbooksComResponse {
-	url := fmt.Sprintf("https://api.ebooks.com/v2/FI/book/search?title=%s&author=%s", url2.QueryEscape(title), url2.QueryEscape(author))
-	log.Printf("Searching ebooks.com for %s, %s from path %s", title, author, url)
-	request := getEbook(url, title, author)
+	strippedTitle := util.StripTitle(title)
+	url := fmt.Sprintf("https://api.ebooks.com/v2/FI/book/search?title=%s&author=%s", url2.QueryEscape(strippedTitle), url2.QueryEscape(author))
+	log.Printf("Searching ebooks.com for %s, %s from path %s", strippedTitle, author, url)
+	request := getEbook(url)
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
@@ -55,7 +57,7 @@ func GetEbooksComInfo(title string, author string) EbooksComResponse {
 	return result
 }
 
-func getEbook(url string, title string, author string) *http.Request {
+func getEbook(url string) *http.Request {
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Content-Type", "application/json")

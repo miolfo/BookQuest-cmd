@@ -3,12 +3,12 @@ package finna
 import (
 	json2 "encoding/json"
 	"fmt"
+	util "github.com/miolfo/BookQuest-cmd/pkg/util"
 	"go/types"
 	"io"
 	"log"
 	"net/http"
 	url2 "net/url"
-	"regexp"
 	"strings"
 )
 
@@ -70,32 +70,16 @@ func FindBookByTitle(searchParameters SearchParameters) ([]Book, error) {
 	}
 
 	//Remove all whitespace
-	strippedSearchTitle := stripTitle(searchParameters.Title)
+	strippedSearchTitle := util.StripTitle(searchParameters.Title)
 	var results []Book
 	for _, record := range searchResult.Records {
-		strippedTitle := stripTitle(record.Title)
+		strippedTitle := util.StripTitle(record.Title)
 		if strings.Contains(strippedTitle, strippedSearchTitle) || strings.Contains(strippedSearchTitle, strippedTitle) {
 			results = append(results, record)
 		}
 	}
 
 	return results, nil
-}
-
-func stripTitle(title string) string {
-	strippedTitle := strings.Replace(title, " ", "", -1)
-
-	//Remove series name in parentheses, if it exists
-	par1 := strings.Index(title, "(")
-	par2 := strings.Index(title, ")")
-
-	if par1 > 0 && par2 > 0 {
-		strippedTitle = strippedTitle[0 : par1-1]
-	}
-
-	strippedTitle = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(strippedTitle, "")
-	strippedTitle = strings.ToLower(strippedTitle)
-	return strippedTitle
 }
 
 func getUrl(searchParameters SearchParameters) string {

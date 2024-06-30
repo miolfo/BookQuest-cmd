@@ -1,4 +1,4 @@
-package util
+package finna
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type AvailabilityResult struct {
 	Available bool
 }
 
-func AreBooksAvailable(finnaId []string) []AvailabilityResult {
+func AreBooksAvailable(finnaId []string, progressCallback func(doneCount int)) []AvailabilityResult {
 	var res []AvailabilityResult
 
 	//User agent spoofing required for headless chrome to correctly make requests from javascript
@@ -28,12 +28,13 @@ func AreBooksAvailable(finnaId []string) []AvailabilityResult {
 	ctx, cancel := chromedp.NewContext(actx)
 	defer cancel()
 
-	for _, id := range finnaId {
+	for i, id := range finnaId {
 		available := IsBookAvailable(id, ctx)
 		res = append(res, AvailabilityResult{
 			FinnaId:   id,
 			Available: available,
 		})
+		progressCallback(i + 1)
 	}
 	return res
 }
