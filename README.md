@@ -2,15 +2,17 @@
 Integration between finna and goodreads to check what books are available in a specific location. Can be used to read an exported .csv file from goodreads,
 and then checking if they can be found from a local library using Finna public api, as well as finding a price for the books from ebooks.com api. The tool only checks books in your want-to-read -shelf.
 
-Usage
+## Usage
 
 `
-go run . ./resources/goodreads_library_export.csv 0/Helmet/ ./resources/result.json
+go run . -in=./resources/goodreads_library_export_small.csv -library=0/Helmet/ -out=./resources/result.json
 `
 
-First parameter is the name of the input file. Second parameter is the building to look for (for example, 0/Helmet/ includes all Helsinki city libraries).
-Third parameter is the output file.
-Output generates json objects such as 
+## Flags
+
+- in -flag to determine input file, required
+- out -flag to determine output file, required
+- library -flag, determines library param used in Finna searches
 
 `
 {
