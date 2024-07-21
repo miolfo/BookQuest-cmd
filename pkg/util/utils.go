@@ -5,8 +5,11 @@ import (
 	"strings"
 )
 
-func StripTitle(title string) string {
-	strippedTitle := strings.Replace(title, " ", "", -1)
+func StripTitle(title string, removeWhitespace bool) string {
+	strippedTitle := title
+	if removeWhitespace {
+		strippedTitle = strings.Replace(title, " ", "", -1)
+	}
 
 	//Remove series name in parentheses, if it exists
 	par1 := strings.Index(title, "(")
