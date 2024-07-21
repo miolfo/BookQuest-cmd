@@ -32,7 +32,7 @@ type EbooksComPrice struct {
 }
 
 func GetEbooksComInfo(title string, author string) EbooksComResponse {
-	strippedTitle := util.StripTitle(title, false)
+	strippedTitle := util.StripTitle(title, false, true)
 	url := fmt.Sprintf("https://api.ebooks.com/v2/FI/book/search?title=%s&author=%s", url2.QueryEscape(strippedTitle), url2.QueryEscape(author))
 	log.Printf("Searching ebooks.com for %s, %s from path %s", strippedTitle, author, url)
 	request := getEbook(url)

@@ -27,10 +27,10 @@ type BookSearchResults struct {
 func WriteResultsToPath(results BookSearchResults, path string) {
 	res, marshalErr := json.MarshalIndent(results, "", "\t")
 	if marshalErr != nil {
-		log.Fatal("Unable to marshall results: %s", marshalErr)
+		log.Fatalf("Unable to marshall results: %s", marshalErr)
 	}
 	writeErr := os.WriteFile(path, res, 0644)
 	if writeErr != nil {
-		log.Fatal("Unable to write results: %s", writeErr)
+		log.Fatalf("Unable to write results: %s", writeErr)
 	}
 }

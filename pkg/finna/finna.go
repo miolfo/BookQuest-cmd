@@ -70,10 +70,10 @@ func FindBookByTitle(searchParameters SearchParameters) ([]Book, error) {
 	}
 
 	//Remove all whitespace
-	strippedSearchTitle := util.StripTitle(searchParameters.Title, true)
+	strippedSearchTitle := util.StripTitle(searchParameters.Title, true, false)
 	var results []Book
 	for _, record := range searchResult.Records {
-		strippedTitle := util.StripTitle(record.Title, true)
+		strippedTitle := util.StripTitle(record.Title, true, false)
 		if strings.Contains(strippedTitle, strippedSearchTitle) || strings.Contains(strippedSearchTitle, strippedTitle) {
 			results = append(results, record)
 		}
